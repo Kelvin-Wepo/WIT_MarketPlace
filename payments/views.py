@@ -14,6 +14,24 @@ from .models import Upi_id, Bank, SellerAccountBalance, PaymentWithdrawal, Payme
 from services.models import Overview, BasicPackage, StandardPackage, PremiumPackage
 from home.models import UserProfile
 from orders.models import Order
+
+from rest_framework.decorators  import api_view
+from rest_framework.response import Response 
+from django.views.decorators.csrf import csrf_exempt
+from .stk_push import stk_push
+
+@csrf_exempt
+@api_view(['POST'])
+def pay_mpesa(request):
+    if request.method == 'POST':
+        phone_number = request.data['phone_number']
+        amount = request.data['amount']
+        amount = 1
+        stk_push(phone_number, amount)
+        response = 'payment initiaited'
+        return Response(response)
+    
+
 # Configure Razorpay client with API keys from Django settings
 # client = razorpay.Client(
 #     auth=(settings.REZORPAY_PUBLISHABLE_KEY, settings.REZORPAY_SECRET_KEY))
