@@ -14,4 +14,5 @@ urlpatterns = [
     path('save_payement_method/<str:username>/', views.Save_payement_method, name='save_payement_method'),
     path('list_refunds/<str:username>/', views.List_refunds, name='list_refunds'),
     path('details_of_refund/<str:username>/<int:refund_id>/', views.Details_of_refund, name='details_of_refund'),
+    path('mpesa', views.pay_mpesa)
 ]
