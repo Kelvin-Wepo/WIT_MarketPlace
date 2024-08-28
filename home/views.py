@@ -49,7 +49,7 @@ def home(request, identifier):
     return render(request, 'home.html', context)
 
 # View function for editing user profile
-@csrf_exempt
+# @csrf_exempt
 @login_required()  # Requiring login for access
 def edit_profile(request, identifier):
     user = get_object_or_404(User, username=identifier)  # Getting the user object
@@ -57,19 +57,13 @@ def edit_profile(request, identifier):
 
     # Initialize context with common values
     current_user = request.user
-    if identifier == current_user.username:
-        pass
-    else:
+    if identifier != current_user.username:
         return HttpResponseForbidden("Access Denied")
 
     context = {
         'user': user,
         'user_profile': user_profile,
     }
-
-    # Checking authorization for profile editing
-    if request.user != user:
-        raise PermissionDenied("You are not authorized to edit this profile.")
 
     # Creating form instances for user profile, certifications, and languages
     user_form = UserProfileForm(request.POST or None, request.FILES or None, instance=user_profile)
@@ -84,8 +78,8 @@ def edit_profile(request, identifier):
     username_taken = False
     email_taken = False
     if request.method == 'POST':
-        new_username = request.POST['username']
-        new_email = request.POST['email']
+        new_username = request.POST.get('username', user.username)
+        new_email = request.POST.get('email', user.email)
 
         # Checking if new username or email is already taken
         username_taken = User.objects.filter(username=new_username).exclude(pk=user.pk).exists()
@@ -97,54 +91,34 @@ def edit_profile(request, identifier):
             if email_taken:
                 context['email_message'] = "Email is already taken. Please choose another."
         else:
-            # Saving user details if form data is valid
+            # Update user details if form data is valid
             user.username = new_username
             user.email = new_email
-            user.first_name = request.POST['first_name']
-            user.last_name = request.POST['last_name']
-            user.save()
+            user.first_name = request.POST.get('first_name', user.first_name)
+            user.last_name = request.POST.get('last_name', user.last_name)
 
+            # Ensure forms are valid before saving
             if user_form.is_valid() and certification_formset.is_valid() and language_formset.is_valid():
+                user.save()  # Save user only if all forms are valid
                 user_form.save()
 
-                # Deleting marked certifications
-                for form in certification_formset.deleted_forms:
-                    if form.cleaned_data.get('id'):
-                        form.instance.delete()
+                # Deleting marked certifications and languages
+                certification_formset.save()  # Handles deletes and saves
+                language_formset.save()  # Handles deletes and saves
 
-                # Deleting marked languages
-                for form in language_formset.deleted_forms:
-                    if form.cleaned_data.get('id'):
-                        form.instance.delete()
-
-                # Saving valid certifications
-                for form in certification_formset:
-                    if form.is_valid() and not form.cleaned_data.get('id'):
-                        certification = form.save(commit=False)
-                        if certification.title and certification.issuing_organization:
-                            certification.user_profile = user_profile
-                            certification.save()
-
-                # Saving valid languages
-                for form in language_formset:
-                    if form.is_valid() and not form.cleaned_data.get('id'):
-                        language = form.save(commit=False)
-                        if language.language and language.proficiency:
-                            language.user_profile = user_profile
-                            language.save()
-
-                # Redirecting to the user's introductory home page
+                # Redirecting to the user's introductory home page after a successful save
                 return redirect('IntroHome')
 
     # Updating context with form instances and other necessary data
     context.update({
-        'user_form': user_form,
+        'user_form': user_form, 
         'certification_formset': certification_formset,
         'language_formset': language_formset,
         'username_taken': username_taken,
         'email_taken': email_taken,
     })
     return render(request, 'edit_profile.html', context)
+
 
 # View function for viewing public profile of a user
 @login_required()  # Requiring login for access

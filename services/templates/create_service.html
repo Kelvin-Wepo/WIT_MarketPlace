@@ -47,7 +47,9 @@
     <div class="row">
       <div class="col-12">
         <center>
+          {% csrf_token %}
           <form method="post" action="{% url 'create_job_profile' user.username %}" enctype="multipart/form-data">
+            
             <h1 class="mt-5">Create Job Profile</h1>
             <div class="step active">
 
@@ -197,7 +199,7 @@
             </div>
 
             <div class="step">
-              <h2 <h2 data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-placement="left"
+              <h2 data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-placement="left"
                 data-bs-content="Get noticed by the right buyers with visual examples of your services.Show some of the best work you created in a document">
                 <i class="las la-question-circle"></i>Showcase Your Services In A Service Gallery</h2>
               <p style="color: var(--user-name-color);">Encourage buyers to choose your Service Profile by featuring a
