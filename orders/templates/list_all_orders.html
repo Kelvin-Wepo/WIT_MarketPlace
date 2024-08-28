@@ -200,7 +200,7 @@
                     <tr class="order-item" data-status="{{ order.status }}">
                         <th scope="row">{{ forloop.counter }}</th>
                         <td>{{ order.seller.username }}</td>
-                        <td>{{ service.titleOverview | slice:"40"}}... </td>
+                        <td>{{ service_profile.titleOverview | slice:"40"}}... </td>
                         <td>{{ order.delivery_date }}</td>
 
                         {% for transaction in transactions %}

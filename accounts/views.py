@@ -5,6 +5,7 @@ from django.shortcuts import render
 from django.shortcuts import render, redirect
 from .forms import RegistrationForm, LoginForm
 from django.contrib.auth import login, logout
+import africastalking
 
 # Define view for user registration
 
@@ -17,11 +18,13 @@ def register(request):
             # Save the form data if it's valid
             form.save()
             # Redirect to login page after successful registration
+            
             return redirect('login')
     else:
         # Render the registration form for GET requests
         form = RegistrationForm()
     # Render the registration template with the form
+
     return render(request, 'registration/register.html', {'form': form})
 
 # Define view for user logout

@@ -148,8 +148,7 @@
 
               {{service_profile.user}}
             </span>
-            <img class="rounded-circle me-1" src="{{ user_profile.profile_image.url }}"
-              style="width: 40px;height:40px;object-fit: cover;float: left;" alt="...">
+           
             <a style="float: left;" class="name-of-seller" href="{% url 'view_profile_public' service_profile.user %}">
               <p class="user-name text-lowercase ms-4 fw-bold">
                 {{service_profile.user.first_name}} {{service_profile.user.last_name}} <span
@@ -234,7 +233,7 @@
                 <div id="basic-details" class="details">
                   <div class="details-cell">
                     <div class="package">
-                      <h4 class="package-price">₹{{ basic_pack.Basic_price }}</h4>
+                      <h4 class="package-price">Ksh{{ basic_pack.Basic_price }}</h4>
                       <h4 class="package-header">{{ basic_pack.Basic_title }}</h4>
                       <div class="package-content">
                         <p>{{ basic_pack.Basic_description }}</p>
@@ -291,7 +290,7 @@
                 <div id="standard-details" class="details">
                   <div class="details-cell">
                     <div class="package">
-                      <h4 class="package-price">₹{{ standard_pack.Standard_price }}</h4>
+                      <h4 class="package-price">Ksh{{ standard_pack.Standard_price }}</h4>
                       <h4 class="package-header">{{ standard_pack.Standard_title }}</h4>
                       <div class="package-content">
                         <p>{{ standard_pack.Standard_description }}</p>
@@ -353,7 +352,7 @@
                 <div id="premium-details" class="details">
                   <div class="details-cell">
                     <div class="package">
-                      <h4 class="package-price">₹{{ premium_pack.Premium_price }}</h4>
+                      <h4 class="package-price">Ksh{{ premium_pack.Premium_price }}</h4>
                       <h4 class="package-header">{{ premium_pack.Premium_title }}</h4>
                       <div class="package-content">
                         <p>{{ premium_pack.Premium_description }}</p>

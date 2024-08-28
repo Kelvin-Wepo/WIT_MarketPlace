@@ -8,6 +8,7 @@ from django.utils import timezone
 from datetime import timedelta
 from decimal import Decimal
 from datetime import datetime 
+import stripe
 # import razorpay
 # Import models from the current app and other related apps
 from .models import Upi_id, Bank, SellerAccountBalance, PaymentWithdrawal, PaymentMethod, Transaction, Refund_details
@@ -19,6 +20,9 @@ from rest_framework.decorators  import api_view
 from rest_framework.response import Response 
 from django.views.decorators.csrf import csrf_exempt
 from .stk_push import stk_push
+
+stripe.api_key = 'your-secret-key'
+client = stripe
 
 @csrf_exempt
 @api_view(['POST'])
@@ -86,7 +90,7 @@ def payments(request, overview_id, username):
             # Create Razorpay order for payment
             data = {"amount": price * 100, "currency": "INR",
                     "receipt": "order_rcptid_11"}
-            payment = client.order.create(data=data)
+            payment = User.order.create(data=data)
             API_KRY = settings.REZORPAY_PUBLISHABLE_KEY
             order_id = payment['id']
 
