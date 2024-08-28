@@ -7,7 +7,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Overview, BasicPackage, StandardPackage, PremiumPackage, Description, Question, Gallery, RatingService
 from django.http import HttpResponseForbidden
 
+from django.views.decorators.csrf import csrf_protect
 
+@csrf_protect
 @login_required()
 def create_job_profile(request, identifier):
     user = get_object_or_404(User, username=identifier)
