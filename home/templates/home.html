@@ -153,20 +153,7 @@
             </nav>
         </div>
 
-        <hr>
-        <div class="row mt-3" id="CtgListRow">
-            {% for ctg in category %}
-            <div class="col-6 cat1 col-sm-4 col-md-3 col-lg-2 {% if forloop.counter > 6 %}d-none{% endif %}">
-                <p style="cursor: pointer;">{{ ctg }}</p>
-            </div>
-            <div class="col-6 cat2 col-sm-4 col-md-3 col-lg-2 {% if forloop.counter > 2 %}d-none{% endif %}">
-                <p>{{ ctg }}</p>
-            </div>
-            {% endfor %}
-            <div class="col-12">
-                <button id="ShowbtnCtg" class="w-100 btn loginbtn" onclick="toggleCategories()">Show/Hide</button>
-            </div>
-        </div>
+        
 
         <hr>
 
@@ -192,220 +179,47 @@
             </div>
         </div>
 
-        <div class="row mt-1 mb-3 ">
-
+        <div class="row mt-1 mb-3">
             <div class="col-12">
-                <h4>
-                    All
-                </h4>
-
-
+                <h4>All</h4>
                 <div class="d-flex flex-row flex-nowrap overflow-auto">
                     {% for service_profile in user_service_profiles %}
-                    {% for user_profile in user_profile %}
-                    {% if user_profile.profile_image %}
-                    {% if user_profile.user == service_profile.user%}
-                    <div class="card card-block mx-2"
-                        style="min-width: 333px;max-height: auto;box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-                        {% for gallery in service_profile.gallery_set.all %}
-                        {% if gallery.image1 %}
-                        <img src="{{ gallery.image1.url }}" style="width:100%;height:160px;object-fit: cover;"
-                            class="card-img-top" alt="...">
-                        {% endif %}
-                        {% endfor %}
-
-
-                        <div class="card-body">
-                            <div class="mt-1">
-                                <img class="rounded-circle mt-1" src="{{ user_profile.profile_image.url }}"
-                                    style="width: 20px;height:20px;object-fit: cover;float: left;" alt="...">
-                                <a class="card-link" href="{% url 'view_profile_public' service_profile.user %}">
-                                    <p class="user-name-card text-lowercase ms-4 fw-bold">{{service_profile.user}}</p>
-                                </a>
-                            </div>
-                            <a class="card-link" href="{% url 'view_service_profile' service_profile.id %}">
-                                <p class="card-title">{{ service_profile.titleOverview}}</p>
-                            </a>
-                            <div class="d-flex justify-content-between">
-                                <p class="card-text">★<span style="font-size: smaller;"
-                                        class="fw-bold">{{service_profile.overall_rating}}</span></p>
-                                {% for basic_package in service_profile.basicpackage_set.all %}
-                                <p class="card-text text-start"><strong>From<span
-                                            class="ms-1">₹{{basic_package.Basic_price}}</span></strong>
-                                </p>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                    {% endif %}
-                    {% endif %}
-                    {% endfor %}
+                        {% with user_profile=service_profile.user.profile %}
+                           
+                                <div class="card card-block mx-2"
+                                    style="min-width: 333px; max-height: auto; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+                                    {% for gallery in service_profile.gallery_set.all %}
+                                        {% if gallery.image1 %}
+                                            <img src="{{ gallery.image1.url }}" style="width:100%; height:160px; object-fit: cover;"
+                                                class="card-img-top" alt="...">
+                                        {% endif %}
+                                    {% endfor %}
+                                    <div class="card-body">
+                                        <div class="mt-1">
+                                            <a class="card-link" href="{% url 'view_profile_public' service_profile.user.username %}">
+                                                <p class="user-name-card text-lowercase ms-4 fw-bold">{{ service_profile.user.username }}</p>
+                                            </a>
+                                        </div>
+                                        <a class="card-link" href="{% url 'view_service_profile' service_profile.id %}">
+                                            <p class="card-title">{{ service_profile.titleOverview }}</p>
+                                        </a>
+                                        <div class="d-flex justify-content-between">
+                                            <p class="card-text">★<span style="font-size: smaller;" class="fw-bold">{{ service_profile.overall_rating }}</span></p>
+                                            {% for basic_package in service_profile.basicpackage_set.all %}
+                                                <p class="card-text text-start"><strong>From<span class="ms-1">Ksh{{ basic_package.Basic_price }}</span></strong></p>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                        {% endwith %}
+                    {% empty %}
+                        <p>No service profiles found.</p>
                     {% endfor %}
                 </div>
             </div>
         </div>
-        <div class="row mt-1 mb-3 ">
-
-            <div class="col-12">
-                <h4>IT & Networking</h4>
-                <div class="d-flex flex-row flex-nowrap overflow-auto">
-                    {% for service_profile in user_service_profiles %}
-                    {% for user_profile in user_profile %}
-                    {% if user_profile.profile_image %}
-                    {% if user_profile.user == service_profile.user%}
-
-                    {% if service_profile.category|lower == "it & networking" %}
-                    <div class="card card-block mx-2"
-                        style="min-width: 333px;max-height: auto;box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-                        {% for gallery in service_profile.gallery_set.all %}
-                        {% if gallery.image1 %}
-                        <img src="{{ gallery.image1.url }}" style="width:100%;height:160px;object-fit: cover;"
-                            class="card-img-top" alt="...">
-                        {% endif %}
-                        {% endfor %}
-                        <div class="card-body">
-                            <div class="mt-1">
-                                <img class="rounded-circle mt-1" src="{{ user_profile.profile_image.url }}"
-                                    style="width: 20px;height:20px;object-fit: cover;float: left;" alt="...">
-                                <a class="card-link" href="{% url 'view_profile_public' service_profile.user %}">
-                                    <p class="user-name-card text-lowercase ms-4 fw-bold">{{service_profile.user}}</p>
-                                </a>
-                            </div>
-                            <a class="card-link" href="{% url 'view_service_profile' service_profile.id %}">
-                                <p class="card-title">{{ service_profile.titleOverview}}</p>
-                            </a>
-                            <div class="d-flex justify-content-between">
-                                <p class="card-text">★<span style="font-size: smaller;"
-                                        class="fw-bold">{{service_profile.overall_rating}}</span></p>
-                                {% for basic_package in service_profile.basicpackage_set.all %}
-                                <p class="card-text text-start"><strong>From<span
-                                            class="ms-1">₹{{basic_package.Basic_price}}</span></strong>
-                                </p>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-
-                    {% endif %}
-                    {% endif %}
-                    {% endif %}
-                    {% endfor %}
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-
-        <div class="row mt-1 mb-3 ">
-
-            <div class="col-12">
-                <h4>UI/UX Design</h4>
-
-                <div class="d-flex flex-row flex-nowrap overflow-auto">
-                    {% for service_profile in user_service_profiles %}
-                    {% for user_profile in user_profile %}
-                    {% if user_profile.profile_image %}
-                    {% if user_profile.user == service_profile.user%}
-
-                    {% if service_profile.category|lower == "ui/ux design" %}
-
-                    <div class="card card-block mx-2"
-                        style="min-width: 333px;max-height: auto;box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-                        {% for gallery in service_profile.gallery_set.all %}
-                        {% if gallery.image1 %}
-                        <img src="{{ gallery.image1.url }}" style="width:100%;height:160px;object-fit: cover;"
-                            class="card-img-top" alt="...">
-                        {% endif %}
-                        {% endfor %}
-                        <div class="card-body">
-                            <div class="mt-1">
-                                <img class="rounded-circle mt-1" src="{{ user_profile.profile_image.url }}"
-                                    style="width: 20px;height:20px;object-fit: cover;float: left;" alt="...">
-                                <a class="card-link" href="{% url 'view_profile_public' service_profile.user %}">
-                                    <p class="user-name-card text-lowercase ms-4 fw-bold">{{service_profile.user}}</p>
-                                </a>
-                            </div>
-                            <a class="card-link" href="{% url 'view_service_profile' service_profile.id %}">
-                                <p class="card-title">{{ service_profile.titleOverview}}</p>
-                            </a>
-                            <div class="d-flex justify-content-between">
-                                <p class="card-text">★<span style="font-size: smaller;"
-                                        class="fw-bold">{{service_profile.overall_rating}}</span></p>
-                                {% for basic_package in service_profile.basicpackage_set.all %}
-                                <p class="card-text text-start"><strong>From<span
-                                            class="ms-1">₹{{basic_package.Basic_price}}</span></strong>
-                                </p>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-
-                    {% endif %}
-                    {% endif %}
-                    {% endif %}
-                    {% endfor %}
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-
-
-        <div class="row mt-1 mb-3 ">
-
-            <div class="col-12">
-                <h4>Writing & Translation</h4>
-
-                <div class="d-flex flex-row flex-nowrap overflow-auto">
-                    {% for service_profile in user_service_profiles %}
-                    {% for user_profile in user_profile %}
-                    {% if user_profile.profile_image %}
-                    {% if user_profile.user == service_profile.user%}
-
-                    {% if service_profile.category|lower == "writing & translation" %}
-
-                    <div class="card card-block mx-2"
-                        style="min-width: 333px;max-height: auto;box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-                        {% for gallery in service_profile.gallery_set.all %}
-                        {% if gallery.image1 %}
-                        <img src="{{ gallery.image1.url }}" style="width:100%;height:160px;object-fit: cover;"
-                            class="card-img-top" alt="...">
-                        {% endif %}
-                        {% endfor %}
-                        <div class="card-body">
-                            <div class="mt-1">
-                                <img class="rounded-circle mt-1" src="{{ user_profile.profile_image.url }}"
-                                    style="width: 20px;height:20px;object-fit: cover;float: left;" alt="...">
-                                <a class="card-link" href="{% url 'view_profile_public' service_profile.user %}">
-                                    <p class="user-name-card text-lowercase ms-4 fw-bold">{{service_profile.user}}</p>
-                                </a>
-                            </div>
-                            <a class="card-link" href="{% url 'view_service_profile' service_profile.id %}">
-                                <p class="card-title">{{ service_profile.titleOverview}}</p>
-                            </a>
-                            <div class="d-flex justify-content-between">
-                                <p class="card-text">★<span style="font-size: smaller;"
-                                        class="fw-bold">{{service_profile.overall_rating}}</span></p>
-                                {% for basic_package in service_profile.basicpackage_set.all %}
-                                <p class="card-text text-start"><strong>From<span
-                                            class="ms-1">₹{{basic_package.Basic_price}}</span></strong>
-                                </p>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-
-                    {% endif %}
-                    {% endif %}
-                    {% endif %}
-                    {% endfor %}
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-
-
-
+        
     </div>
-
 
 
     <script src="{% static 'js/theme.js' %}"></script>

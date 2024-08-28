@@ -7,38 +7,46 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Overview, BasicPackage, StandardPackage, PremiumPackage, Description, Question, Gallery, RatingService
 from django.http import HttpResponseForbidden
 
-from django.views.decorators.csrf import csrf_protect
 
-@csrf_protect
 @login_required()
 def create_job_profile(request, identifier):
     user = get_object_or_404(User, username=identifier)
 
     current_user = request.user
-    if identifier == current_user.username:
-        pass
-    else:
+    if identifier != current_user.username:
         return HttpResponseForbidden("Access Denied")
 
     if request.method == 'POST':
         overview_form = OverviewForm(request.POST)
         basic_package_form = BasicPackageForm(request.POST, prefix='basic')
-        standard_package_form = StandardPackageForm(
-            request.POST, prefix='standard')
-        premium_package_form = PremiumPackageForm(
-            request.POST, prefix='premium')
-
-        # Uncomment these lines if you have additional forms for description, question, and gallery
+        standard_package_form = StandardPackageForm(request.POST, prefix='standard')
+        premium_package_form = PremiumPackageForm(request.POST, prefix='premium')
         description_form = DescriptionForm(request.POST)
         question_form = QuestionForm(request.POST)
         gallery_form = GalleryForm(request.POST, request.FILES)
 
-        if (overview_form.is_valid() and basic_package_form.is_valid() and
-            standard_package_form.is_valid() and premium_package_form.is_valid() and
-            description_form.is_valid() and
-            question_form.is_valid() and
-                gallery_form.is_valid()):
+        # Debugging: Check form validity
+        forms_are_valid = (
+            overview_form.is_valid() and 
+            basic_package_form.is_valid() and 
+            standard_package_form.is_valid() and 
+            premium_package_form.is_valid() and 
+            description_form.is_valid() and 
+            question_form.is_valid() and 
+            gallery_form.is_valid()
+        )
 
+        # Print form errors if any form is invalid
+        if not forms_are_valid:
+            print("Overview form errors:", overview_form.errors)
+            print("Basic package form errors:", basic_package_form.errors)
+            print("Standard package form errors:", standard_package_form.errors)
+            print("Premium package form errors:", premium_package_form.errors)
+            print("Description form errors:", description_form.errors)
+            print("Question form errors:", question_form.errors)
+            print("Gallery form errors:", gallery_form.errors)
+
+        if forms_are_valid:
             overview = overview_form.save(commit=False)
             overview.user = request.user
             overview.save()
@@ -55,11 +63,6 @@ def create_job_profile(request, identifier):
             premium_package.overview = overview
             premium_package.save()
 
-            # extra_service = extra_service_form.save(commit=False)
-            # extra_service.overview = overview
-            # extra_service.save()
-
-            # Uncomment these sections if you have forms for description, question, and gallery
             description = description_form.save(commit=False)
             description.overview = overview
             description.save()
@@ -80,7 +83,6 @@ def create_job_profile(request, identifier):
         basic_package_form = BasicPackageForm(prefix='basic')
         standard_package_form = StandardPackageForm(prefix='standard')
         premium_package_form = PremiumPackageForm(prefix='premium')
-        # Uncomment these lines if you have forms for description, question, and gallery
         description_form = DescriptionForm()
         question_form = QuestionForm()
         gallery_form = GalleryForm()
@@ -90,12 +92,12 @@ def create_job_profile(request, identifier):
         'basic_package_form': basic_package_form,
         'standard_package_form': standard_package_form,
         'premium_package_form': premium_package_form,
-        # Uncomment these lines if you have forms for description, question, and gallery
         'description_form': description_form,
         'question_form': question_form,
         'gallery_form': gallery_form,
     }
     return render(request, 'create_service.html', context)
+
 
 
 @login_required()

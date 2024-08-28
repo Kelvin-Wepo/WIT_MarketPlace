@@ -9,9 +9,10 @@ class LoginForm(AuthenticationForm):
 
 class RegistrationForm(UserCreationForm):
     email = forms.EmailField(required=True)
+    phone = forms.CharField(max_length=15, required=True, help_text="Enter your phone number")
 
     class Meta:
         model = User
-        fields = ("username","first_name", "last_name","email", "password1", "password2", )
+        fields = ("username","first_name", "phone", "last_name","email", "password1", "password2", )
         
 
