@@ -51,6 +51,7 @@ def home(request, identifier):
 
 # View function for editing user profile
 # @csrf_exempt
+<<<<<<< HEAD
 # @login_required()  # Requiring login for access
 # def edit_profile(request, identifier):
 #     user = get_object_or_404(User, username=identifier)  # Getting the user object
@@ -153,7 +154,9 @@ def edit_profile(request, identifier):
     user = get_object_or_404(User, username=identifier)
     user_profile, created = UserProfile.objects.get_or_create(user=user)
 
-    if request.user != user:
+    # Initialize context with common values
+    current_user = request.user
+    if identifier != current_user.username:
         return HttpResponseForbidden("Access Denied")
 
     user_form = UserProfileForm(request.POST or None, request.FILES or None, instance=user_profile)
@@ -206,6 +209,7 @@ def edit_profile(request, identifier):
         'user_profile': user_profile,
     }
 
+<<<<<<< HEAD
     return render(request, 'edit_profile.html', context)
 
     user = get_object_or_404(User, username=identifier)
@@ -216,6 +220,9 @@ def edit_profile(request, identifier):
         return HttpResponseForbidden("Access Denied")
 
     # Creating form instances
+=======
+    # Creating form instances for user profile, certifications, and languages
+>>>>>>> b458055720d5929664b48f9f694cd2cf11b67e54
     user_form = UserProfileForm(request.POST or None, request.FILES or None, instance=user_profile)
     CertificationFormSet = inlineformset_factory(UserProfile, Certification, form=CertificationForm, extra=1)
     certification_formset = CertificationFormSet(request.POST or None, request.FILES or None, instance=user_profile, prefix='certifications')
@@ -223,13 +230,19 @@ def edit_profile(request, identifier):
     language_formset = LanguageFormSet(request.POST or None, request.FILES or None, instance=user_profile, prefix='languages')
 
     if request.method == 'POST':
+<<<<<<< HEAD
         new_username = request.POST.get('username')
         new_email = request.POST.get('email')
+=======
+        new_username = request.POST.get('username', user.username)
+        new_email = request.POST.get('email', user.email)
+>>>>>>> b458055720d5929664b48f9f694cd2cf11b67e54
 
         # Check if new username or email is already taken
         username_taken = User.objects.filter(username=new_username).exclude(pk=user.pk).exists()
         email_taken = User.objects.filter(email=new_email).exclude(pk=user.pk).exists()
 
+<<<<<<< HEAD
         if username_taken:
             messages.error(request, "Username is already taken.")
         elif email_taken:
@@ -265,13 +278,46 @@ def edit_profile(request, identifier):
 
     context = {
         'user_form': user_form,
+=======
+        if username_taken or email_taken:
+            if username_taken:
+                context['username_message'] = "Username is already taken. Please choose another."
+            if email_taken:
+                context['email_message'] = "Email is already taken. Please choose another."
+        else:
+            # Update user details if form data is valid
+            user.username = new_username
+            user.email = new_email
+            user.first_name = request.POST.get('first_name', user.first_name)
+            user.last_name = request.POST.get('last_name', user.last_name)
+
+            # Ensure forms are valid before saving
+            if user_form.is_valid() and certification_formset.is_valid() and language_formset.is_valid():
+                user.save()  # Save user only if all forms are valid
+                user_form.save()
+
+                # Deleting marked certifications and languages
+                certification_formset.save()  # Handles deletes and saves
+                language_formset.save()  # Handles deletes and saves
+
+                # Redirecting to the user's introductory home page after a successful save
+                return redirect('IntroHome')
+
+    # Updating context with form instances and other necessary data
+    context.update({
+        'user_form': user_form, 
+>>>>>>> b458055720d5929664b48f9f694cd2cf11b67e54
         'certification_formset': certification_formset,
         'language_formset': language_formset,
         'user': user,
         'user_profile': user_profile,
     }
 
+<<<<<<< HEAD
     return render(request, 'edit_profile.html', context)
+=======
+
+>>>>>>> b458055720d5929664b48f9f694cd2cf11b67e54
 # View function for viewing public profile of a user
 @login_required()  # Requiring login for access
 def view_profile_public(request, username):

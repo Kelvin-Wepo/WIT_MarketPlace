@@ -104,8 +104,8 @@
                                         href="{% url 'create_job_profile' user_profile.user.username %}">Create
                                         Services</a>
                                     {% else %}
-                                    <a class="btncreatejob nav-link" href="javascript:void(0);"
-                                        onclick="showProfileIncompleteMessage('Please complete your profile before creating services.');">Create
+                                    <a class="btncreatejob nav-link" href="{% url 'create_job_profile' user_profile.user.username %}"
+                                       >Create
                                         Services</a>
                                     {% endif %}
                                 </li>
